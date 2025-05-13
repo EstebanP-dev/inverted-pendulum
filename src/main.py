@@ -1,44 +1,49 @@
-# main.py
-
 import numpy as np
 import matplotlib.pyplot as plt
 from pendulum_model import InvertedPendulum
 from constants import GRAVITY, MASS, LENGTH, TIME_STEP
 
 def main():
-    # Initialize the inverted pendulum model
-    pendulum = InvertedPendulum(mass=MASS, length=LENGTH, gravity=GRAVITY)
+    initial_angle_rad = 0.1
+    initial_angular_velocity_rad_s = 0.0 
 
-    # Simulation parameters
-    time_duration = 10  # seconds
-    num_steps = int(time_duration / TIME_STEP)
-    time = np.linspace(0, time_duration, num_steps)
+    pendulum = InvertedPendulum(
+        mass=MASS,
+        length=LENGTH,
+        gravity=GRAVITY,
+        time_step=TIME_STEP,
+        initial_angle=initial_angle_rad,
+        initial_angular_velocity=initial_angular_velocity_rad_s
+    )
+
+    time_duration_s = 10
+    num_steps = int(time_duration_s / TIME_STEP)
+    time_array = np.linspace(0, time_duration_s, num_steps)
     
-    # Arrays to store the results
-    angles = np.zeros(num_steps)
-    angular_velocities = np.zeros(num_steps)
+    angles_rad = np.zeros(num_steps)
+    angular_velocities_rad_s = np.zeros(num_steps)
 
-    # Initial conditions
-    pendulum.set_initial_conditions(theta=0.1, omega=0)  # small angle and zero velocity
-
-    # Run the simulation
     for i in range(num_steps):
-        pendulum.update_state(TIME_STEP)
-        angles[i] = pendulum.theta
-        angular_velocities[i] = pendulum.omega
+        angles_rad[i] = pendulum.angle 
+        angular_velocities_rad_s[i] = pendulum.angular_velocity
+        
+        pendulum.update_state()
 
-    # Visualization
-    plt.figure(figsize=(12, 6))
+
+    plt.figure(figsize=(12, 8))
+    
     plt.subplot(2, 1, 1)
-    plt.plot(time, angles, label='Angle (rad)')
-    plt.title('Inverted Pendulum Simulation')
-    plt.ylabel('Angle (rad)')
+    plt.plot(time_array, angles_rad, label='Ángulo (rad)')
+    plt.title('Simulación del Péndulo Invertido')
+    plt.ylabel('Ángulo (rad)')
+    plt.grid(True)
     plt.legend()
 
     plt.subplot(2, 1, 2)
-    plt.plot(time, angular_velocities, label='Angular Velocity (rad/s)', color='orange')
-    plt.xlabel('Time (s)')
-    plt.ylabel('Angular Velocity (rad/s)')
+    plt.plot(time_array, angular_velocities_rad_s, label='Velocidad Angular (rad/s)', color='orange')
+    plt.xlabel('Tiempo (s)')
+    plt.ylabel('Velocidad Angular (rad/s)')
+    plt.grid(True)
     plt.legend()
 
     plt.tight_layout()
